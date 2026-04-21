@@ -1,0 +1,31 @@
+<div class="container">
+  <h1>DSpace Excel Demo</h1>
+  <p>
+    Tölts fel egy Excel fájlt. A backend az első sort fejlécnek veszi, majd
+    megszámolja az oszlopokat és az adatsorokat.
+  </p>
+
+  <div class="upload-box">
+    <input type="file" accept=".xlsx" (change)="onFileSelected($event)" />
+    <button (click)="uploadFile()" [disabled]="loading()">
+      {{ loading() ? 'Feldolgozás...' : 'Excel elemzése' }}
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (result()) {
+    <div class="result">
+      <h2>Eredmény</h2>
+      <p><strong>Fájlnév:</strong> {{ result()!.fileName }}</p>
+      <p><strong>Munkalap:</strong> {{ result()!.sheetName }}</p>
+      <p><strong>Oszlopok száma:</strong> {{ result()!.columnCount }}</p>
+      <p><strong>Adatsorok száma:</strong> {{ result()!.rowCount }}</p>
+      <p><strong>Üzenet:</strong> {{ result()!.message }}</p>
+    </div>
+  }
+</div>
