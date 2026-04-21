@@ -1,0 +1,9 @@
+Szerző	contributor.author
+Cím	title.none
+Iskola	contributor.department
+Év	date.issued
+Konzulens 1	contributor.advisor
+Konzulens 2	contributor.advisor
+Opponens1	contributor.opponent
+Opponens2	contributor.opponent
+Egyéb	description.none

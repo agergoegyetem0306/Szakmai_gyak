@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<dublin_core schema="dc">
+  <dcvalue element="contributor" qualifier="author" language="hu">Szerző (100, 700)(egységesített alak)</dcvalue>
+  <dcvalue element="contributor" qualifier="none" language="hu">Nyomdász, nyomda (700, 710)(egységesített alak)</dcvalue>
+  <dcvalue element="contributor" qualifier="translator" language="hu">Fordító (700)(egységesített alak)</dcvalue>
+  <dcvalue element="contributor" qualifier="editor" language="hu">Szerkesztő (700)(egységesített alak)</dcvalue>
+  <dcvalue element="contributor" qualifier="possessor" language="hu">Possessor (700)</dcvalue>
+  <dcvalue element="date" qualifier="issued" language="hu">Kiadás dátuma (260 $c)</dcvalue>
+  <dcvalue element="description" qualifier="none" language="hu">Possessori bejegyzés (561 $a)</dcvalue>
+  <dcvalue element="description" qualifier="none" language="hu">Nem possessori bejegyzés (ajánlások, margináliák)(562 $a)</dcvalue>
+  <dcvalue element="description" qualifier="homelocation" language="hu">Lelőhelyinfó: A DEENK díszműszint 764.433 helyrajzi számú példányának digitális másolata (949 $a)</dcvalue>
+  <dcvalue element="description" qualifier="sponsorship" language="hu">Digitalizálta a DEENK</dcvalue>
+  <dcvalue element="description" qualifier="version" language="hu">Kiadásjelzés (250 $a)</dcvalue>
+  <dcvalue element="description" qualifier="physical" language="hu">Kötés (563, 595)</dcvalue>
+  <dcvalue element="description" qualifier="physical" language="hu">Fizikai állapot (596)</dcvalue>
+  <dcvalue element="description" qualifier="statementofresponsibility" language="hu">Szerzőségi közlés (245 $c)</dcvalue>
+  <dcvalue element="description" qualifier="tableofcontents" language="hu">Tartalom (505)</dcvalue>
+  <dcvalue element="format" qualifier="extent" language="hu">Terjedelem (300)</dcvalue>
+  <dcvalue element="format" qualifier="extentpage" language="hu">Digitális másolat (pdf fájl) terjedelme: 440 p.</dcvalue>
+  <dcvalue element="language" qualifier="none" language="hu">hun(008/35-37,041 $a)</dcvalue>
+  <dcvalue element="identifier" qualifier="bibid" language="hu">rekordazonosító (001)</dcvalue>
+  <dcvalue element="description" qualifier="none" language="hu">Nyelvi megjegyzés (546)</dcvalue>
+  <dcvalue element="publisher" qualifier="none" language="hu">Kiadó (260 $b)</dcvalue>
+  <dcvalue element="publisher" qualifier="place" language="hu">Kiadás helye (260$a) pl.Bétsben</dcvalue>
+  <dcvalue element="coverage" qualifier="spatial" language="hu">Hierarchikus helynév, melléktétel (Város, település) (752 $d)</dcvalue>
+  <dcvalue element="coverage" qualifier="spatial" language="hu">Tárgyszó, földrajzi név / Hierarchikus helynév, melléktétel (651, 752) pl. Bécs (Ausztria)</dcvalue>
+  <dcvalue element="title" qualifier="none" language="hu">Főcím (245 $a)</dcvalue>
+  <dcvalue element="title" qualifier="uniform" language="hu">Főtételként egységesített cím (130, 240, 730)</dcvalue>
+  <dcvalue element="title" qualifier="alternative" language="hu">Címváltozat / Variáns cím, melléktétel (246, 740)</dcvalue>
+  <dcvalue element="title" qualifier="subtitle" language="hu">Alcím, egyéb címadat (245 $b)</dcvalue>
+  <dcvalue element="title" qualifier="series" language="hu">Sorozatcím (490, 830)</dcvalue>
+  <dcvalue element="type" qualifier="none" language="hu">könyv</dcvalue>
+  <dcvalue element="type" qualifier="none" language="en">book</dcvalue>
+  <dcvalue element="type" qualifier="detailed" language="hu">díszmű</dcvalue>
+  <dcvalue element="relation" qualifier="none" language="hu">Hivatkozás, referencia (510)</dcvalue>
+  <dcvalue element="relation" qualifier="none" language="hu">Kapcsolódó rekordok megjegyzés (pl. kolligátum tagja) (580)</dcvalue>
+  <dcvalue element="subject" qualifier="none" language="hu">Tárgyszó (630, 650)</dcvalue>
+  <dcvalue element="subject" qualifier="name" language="hu">Tárgyszó, személynév (600)</dcvalue>
+  <dcvalue element="subject" qualifier="corporateName" language="hu">Testületi név, tárgyszó (610)</dcvalue>
+  <dcvalue element="subject" qualifier="collection" language="hu">Kategória (kötött listából: Galéria::Régi könyvek:: ...)</dcvalue>
+</dublin_core>
