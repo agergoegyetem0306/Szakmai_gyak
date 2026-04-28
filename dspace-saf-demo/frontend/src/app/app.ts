@@ -2,11 +2,13 @@ import { Component, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
-type ExcelAnalysisResult = {
+type DublinCoreGenerationResult = {
   fileName: string;
   sheetName: string;
-  columnCount: number;
-  rowCount: number;
+  excelHeaders: string[];
+  mappedColumns: string[];
+  unmappedColumns: string[];
+  xml: string;
   message: string;
 };
 
@@ -22,7 +24,7 @@ export class App {
 
   loading = signal(false);
   errorMessage = signal('');
-  result = signal<ExcelAnalysisResult | null>(null);
+  result = signal<DublinCoreGenerationResult | null>(null);
 
   constructor(private http: HttpClient) {}
 
@@ -36,7 +38,7 @@ export class App {
     }
   }
 
-  uploadFile(): void {
+  generateDublinCore(): void {
     if (!this.selectedFile) {
       this.errorMessage.set('Kérlek válassz ki egy .xlsx fájlt.');
       return;
@@ -49,7 +51,7 @@ export class App {
     this.errorMessage.set('');
     this.result.set(null);
 
-    this.http.post<ExcelAnalysisResult>('http://localhost:8080/api/excel/analyze', formData)
+    this.http.post<DublinCoreGenerationResult>('http://localhost:8080/api/dublin-core/generate', formData)
       .subscribe({
         next: (response) => {
           this.result.set(response);
@@ -61,7 +63,7 @@ export class App {
           if (error?.error?.error) {
             this.errorMessage.set(error.error.error);
           } else {
-            this.errorMessage.set('Hiba történt a feltöltés vagy az elemzés során.');
+            this.errorMessage.set('Hiba történt a Dublin Core XML generálása során.');
           }
         }
       });

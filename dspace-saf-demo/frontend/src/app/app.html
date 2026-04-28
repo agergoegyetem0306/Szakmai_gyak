@@ -1,14 +1,16 @@
 <div class="container">
-  <h1>DSpace Excel Demo</h1>
+  <h1>DSpace Dublin Core XML Demo</h1>
+
   <p>
-    Tölts fel egy Excel fájlt. A backend az első sort fejlécnek veszi, majd
-    megszámolja az oszlopokat és az adatsorokat.
+    Tölts fel egy Excel fájlt. A rendszer az első sort fejlécnek veszi,
+    az első adatsorból pedig crosswalk alapján Dublin Core XML-t generál.
   </p>
 
   <div class="upload-box">
     <input type="file" accept=".xlsx" (change)="onFileSelected($event)" />
-    <button (click)="uploadFile()" [disabled]="loading()">
-      {{ loading() ? 'Feldolgozás...' : 'Excel elemzése' }}
+
+    <button (click)="generateDublinCore()" [disabled]="loading()">
+      {{ loading() ? 'Generálás...' : 'Dublin Core XML generálása' }}
     </button>
   </div>
 
@@ -21,11 +23,38 @@
   @if (result()) {
     <div class="result">
       <h2>Eredmény</h2>
+
       <p><strong>Fájlnév:</strong> {{ result()!.fileName }}</p>
       <p><strong>Munkalap:</strong> {{ result()!.sheetName }}</p>
-      <p><strong>Oszlopok száma:</strong> {{ result()!.columnCount }}</p>
-      <p><strong>Adatsorok száma:</strong> {{ result()!.rowCount }}</p>
       <p><strong>Üzenet:</strong> {{ result()!.message }}</p>
+
+      <h3>Megfeleltetett oszlopok</h3>
+      <ul>
+        @for (column of result()!.mappedColumns; track column) {
+          <li>{{ column }}</li>
+        }
+      </ul>
+
+      <h3>Nem megfeleltetett oszlopok</h3>
+
+      @if (result()!.unmappedColumns.length > 0) {
+        <div class="warning">
+          <p>
+            Ezek az oszlopok nem szerepelnek a crosswalk fájlban, ezért nem kerültek be az XML-be:
+          </p>
+          <ul>
+            @for (column of result()!.unmappedColumns; track column) {
+              <li>{{ column }}</li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <p class="success">Minden Excel oszlop megfeleltethető.</p>
+      }
+
+      <h3>Generált dublin_core.xml</h3>
+
+      <pre class="xml-preview"><code>{{ result()!.xml }}</code></pre>
     </div>
   }
 </div>
