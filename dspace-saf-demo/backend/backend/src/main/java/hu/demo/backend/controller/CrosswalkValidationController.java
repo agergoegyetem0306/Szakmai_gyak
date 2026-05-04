@@ -14,6 +14,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/crosswalk")
 public class CrosswalkValidationController {
+    private static final Set<String> TECHNICAL_COLUMNS = Set.of("Mappa");
 
     private final CrosswalkService crosswalkService;
 
@@ -52,9 +53,12 @@ public class CrosswalkValidationController {
 
             List<String> mappedColumns = new ArrayList<>();
             List<String> unmappedColumns = new ArrayList<>();
+            List<String> technicalColumns = new ArrayList<>();
 
             for (String header : excelHeaders) {
-                if (crosswalk.containsKey(header)) {
+                if (TECHNICAL_COLUMNS.contains(header)) {
+                    technicalColumns.add(header);
+                } else if (crosswalk.containsKey(header)) {
                     mappedColumns.add(header);
                 } else {
                     unmappedColumns.add(header);
@@ -66,6 +70,7 @@ public class CrosswalkValidationController {
             response.put("excelHeaders", excelHeaders);
             response.put("mappedColumns", mappedColumns);
             response.put("unmappedColumns", unmappedColumns);
+            response.put("technicalColumns", technicalColumns);
             response.put("crosswalkSize", crosswalk.size());
 
             if (unmappedColumns.isEmpty()) {

@@ -1,9 +1,11 @@
 Szerző	contributor.author
 Cím	title.none
-Iskola	contributor.department
-Év	date.issued
-Konzulens 1	contributor.advisor
-Konzulens 2	contributor.advisor
-Opponens1	contributor.opponent
-Opponens2	contributor.opponent
-Egyéb	description.none
+Tanszék	contributor.department
+Készítés éve	date.issued
+Témavezető	contributor.advisor
+Szak	description.course
+Oldalszám	format.extent
+Nyelv	language.iso
+Tárgyszó	subject.none
+Típus	type.none
+Műfaj	type.detailed

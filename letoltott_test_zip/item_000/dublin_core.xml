@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<dublin_core schema="dc">
+  <dcvalue element="contributor" qualifier="author" language="hu">Pénzes, Zsuzsa</dcvalue>
+  <dcvalue element="contributor" qualifier="advisor" language="hu">Mezey, Géza</dcvalue>
+  <dcvalue element="contributor" qualifier="department" language="hu">Gyógyszerésztudományi Kar</dcvalue>
+  <dcvalue element="description" qualifier="course" language="hu">szakgyógyszerész</dcvalue>
+  <dcvalue element="title" qualifier="none" language="hu">Szemészeti készítmények gyógyszertechnológiai vonatkozásai</dcvalue>
+  <dcvalue element="date" qualifier="issued" language="hu">2001</dcvalue>
+  <dcvalue element="format" qualifier="extent" language="hu">50</dcvalue>
+  <dcvalue element="language" qualifier="iso" language="hu">hun</dcvalue>
+  <dcvalue element="subject" qualifier="none" language="hu">digitalizált szakdolgozat</dcvalue>
+  <dcvalue element="type" qualifier="none" language="hu">hallgatói dolgozat</dcvalue>
+  <dcvalue element="type" qualifier="detailed" language="hu">szakdolgozat/diplomamunka</dcvalue>
+</dublin_core>

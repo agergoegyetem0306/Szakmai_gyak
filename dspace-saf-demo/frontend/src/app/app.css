@@ -1,5 +1,5 @@
 .container {
-  max-width: 950px;
+  max-width: 1000px;
   margin: 40px auto;
   padding: 24px;
   font-family: Arial, sans-serif;
@@ -68,6 +68,43 @@ button:disabled {
   color: #246b27;
 }
 
+.technical {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #4f81bd;
+  background: #eef5ff;
+  color: #1f4e79;
+}
+
+.item-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 20px;
+}
+
+.item-button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  background: #ffffff;
+}
+
+.item-button.active {
+  border-color: #1f4e79;
+  background: #dcecff;
+  font-weight: bold;
+}
+
+.item-details {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+}
+
 .xml-preview {
   margin-top: 12px;
   padding: 16px;
@@ -79,6 +116,9 @@ button:disabled {
   white-space: pre-wrap;
   font-family: Consolas, monospace;
   font-size: 14px;
+}
+.download-box {
+  margin: 18px 0;
 }
 
 ul {

@@ -3,14 +3,14 @@
 
   <p>
     Tölts fel egy Excel fájlt. A rendszer az első sort fejlécnek veszi,
-    az első adatsorból pedig crosswalk alapján Dublin Core XML-t generál.
+    minden további nem üres sorból pedig külön itemet és külön Dublin Core XML-t generál.
   </p>
 
   <div class="upload-box">
     <input type="file" accept=".xlsx" (change)="onFileSelected($event)" />
 
     <button (click)="generateDublinCore()" [disabled]="loading()">
-      {{ loading() ? 'Generálás...' : 'Dublin Core XML generálása' }}
+      {{ loading() ? 'Generálás...' : 'Dublin Core XML-ek generálása' }}
     </button>
   </div>
 
@@ -26,21 +26,45 @@
 
       <p><strong>Fájlnév:</strong> {{ result()!.fileName }}</p>
       <p><strong>Munkalap:</strong> {{ result()!.sheetName }}</p>
+      <p><strong>Generált itemek száma:</strong> {{ result()!.itemCount }}</p>
       <p><strong>Üzenet:</strong> {{ result()!.message }}</p>
 
-      <h3>Megfeleltetett oszlopok</h3>
+      <div class="download-box">
+        <button type="button" (click)="downloadZip()" [disabled]="loading()">
+          SAF ZIP letöltése
+        </button>
+      </div>
+
+      <h3>Megfeleltetett metaadat oszlopok</h3>
       <ul>
         @for (column of result()!.mappedColumns; track column) {
           <li>{{ column }}</li>
         }
       </ul>
 
+      <h3>Technikai oszlopok</h3>
+
+      @if (result()!.technicalColumns.length > 0) {
+        <div class="technical">
+          <p>
+            Ezek az oszlopok nem Dublin Core metaadatok, hanem a feldolgozást segítik:
+          </p>
+          <ul>
+            @for (column of result()!.technicalColumns; track column) {
+              <li>{{ column }}</li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <p>Nincs technikai oszlop.</p>
+      }
+
       <h3>Nem megfeleltetett oszlopok</h3>
 
       @if (result()!.unmappedColumns.length > 0) {
         <div class="warning">
           <p>
-            Ezek az oszlopok nem szerepelnek a crosswalk fájlban, ezért nem kerültek be az XML-be:
+            Ezek az oszlopok nem szerepelnek a crosswalk fájlban, ezért nem kerültek be az XML-ekbe:
           </p>
           <ul>
             @for (column of result()!.unmappedColumns; track column) {
@@ -49,12 +73,36 @@
           </ul>
         </div>
       } @else {
-        <p class="success">Minden Excel oszlop megfeleltethető.</p>
+        <p class="success">Minden metaadat-oszlop megfeleltethető.</p>
       }
 
-      <h3>Generált dublin_core.xml</h3>
+      <h3>Generált itemek</h3>
 
-      <pre class="xml-preview"><code>{{ result()!.xml }}</code></pre>
+      <div class="item-list">
+        @for (item of result()!.items; track item.itemName; let index = $index) {
+          <button
+            type="button"
+            class="item-button"
+            [class.active]="selectedItemIndex() === index"
+            (click)="selectItem(index)">
+            {{ item.itemName }}
+          </button>
+        }
+      </div>
+
+      @if (selectedItem()) {
+        <div class="item-details">
+          <h3>Kiválasztott item</h3>
+
+          <p><strong>Item neve:</strong> {{ selectedItem()!.itemName }}</p>
+          <p><strong>Excel sor száma:</strong> {{ selectedItem()!.sourceRowNumber }}</p>
+          <p><strong>Mappa:</strong> {{ selectedItem()!.folderPath || 'Nincs megadva' }}</p>
+
+          <h3>Generált dublin_core.xml</h3>
+
+          <pre class="xml-preview"><code>{{ selectedItem()!.xml }}</code></pre>
+        </div>
+      }
     </div>
   }
 </div>
