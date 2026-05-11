@@ -1,5 +1,7 @@
 package hu.demo.backend.service;
 
+import hu.demo.backend.model.DublinCoreGenerationResult;
+import hu.demo.backend.model.DublinCoreItem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -13,19 +15,20 @@ public class DublinCoreService {
 
     private final CrosswalkService crosswalkService;
     private final ColumnClassificationService columnClassificationService;
+    private final ExcelReaderService excelReaderService;
 
     public DublinCoreService(
             CrosswalkService crosswalkService,
-            ColumnClassificationService columnClassificationService
+            ColumnClassificationService columnClassificationService,
+            ExcelReaderService excelReaderService
     ) {
         this.crosswalkService = crosswalkService;
         this.columnClassificationService = columnClassificationService;
+        this.excelReaderService = excelReaderService;
     }
 
-    public Map<String, Object> generateDublinCoreItems(MultipartFile file) {
-        Map<String, Object> response = new LinkedHashMap<>();
-
-        validateExcelFile(file);
+    public DublinCoreGenerationResult generateDublinCoreItems(MultipartFile file) {
+        excelReaderService.validateExcelFile(file);
 
         String fileName = file.getOriginalFilename();
 
@@ -33,19 +36,12 @@ public class DublinCoreService {
              Workbook workbook = new XSSFWorkbook(inputStream)) {
 
             Sheet sheet = workbook.getSheetAt(0);
-            Row headerRow = sheet.getRow(0);
-
-            if (headerRow == null) {
-                throw new IllegalArgumentException("Az Excel fájl nem tartalmaz fejlécsort.");
-            }
-
-            if (sheet.getLastRowNum() < 1) {
-                throw new IllegalArgumentException("Az Excel fájl nem tartalmaz adatsort.");
-            }
+            Row headerRow = excelReaderService.getHeaderRow(sheet);
+            excelReaderService.validateHasDataRows(sheet);
 
             Map<String, String> crosswalk = crosswalkService.loadCrosswalk();
 
-            List<String> excelHeaders = readHeaderCells(headerRow);
+            List<String> excelHeaders = excelReaderService.readHeaderCells(headerRow);
             List<String> mappedColumns = new ArrayList<>();
             List<String> unmappedColumns = new ArrayList<>();
             List<String> technicalColumns = new ArrayList<>();
@@ -60,35 +56,23 @@ public class DublinCoreService {
                     bundleColumns
             );
 
-            List<Map<String, Object>> items = generateItems(sheet, headerRow, crosswalk);
+            List<DublinCoreItem> items = generateItems(sheet, headerRow, crosswalk);
 
-            response.put("fileName", fileName);
-            response.put("sheetName", sheet.getSheetName());
-            response.put("excelHeaders", excelHeaders);
-            response.put("mappedColumns", mappedColumns);
-            response.put("unmappedColumns", unmappedColumns);
-            response.put("technicalColumns", technicalColumns);
-            response.put("bundleColumns", bundleColumns);
-            response.put("itemCount", items.size());
-            response.put("items", items);
-            response.put("message", "Dublin Core XML generálása sikeres volt minden adatsor alapján.");
-
-            return response;
+            return new DublinCoreGenerationResult(
+                    fileName,
+                    sheet.getSheetName(),
+                    excelHeaders,
+                    mappedColumns,
+                    unmappedColumns,
+                    technicalColumns,
+                    bundleColumns,
+                    items.size(),
+                    items,
+                    "Dublin Core XML generálása sikeres volt minden adatsor alapján."
+            );
 
         } catch (Exception e) {
             throw new RuntimeException("Hiba történt a Dublin Core XML generálása során: " + e.getMessage(), e);
-        }
-    }
-
-    private void validateExcelFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("Nincs feltöltött fájl.");
-        }
-
-        String fileName = file.getOriginalFilename();
-
-        if (fileName == null || !fileName.toLowerCase().endsWith(".xlsx")) {
-            throw new IllegalArgumentException("Csak .xlsx Excel fájl támogatott.");
         }
     }
 
@@ -113,31 +97,31 @@ public class DublinCoreService {
         }
     }
 
-    private List<Map<String, Object>> generateItems(
+    private List<DublinCoreItem> generateItems(
             Sheet sheet,
             Row headerRow,
             Map<String, String> crosswalk
     ) {
-        List<Map<String, Object>> items = new ArrayList<>();
+        List<DublinCoreItem> items = new ArrayList<>();
         int itemIndex = 0;
 
         for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row dataRow = sheet.getRow(rowIndex);
 
-            if (isRowEmpty(dataRow)) {
+            if (excelReaderService.isRowEmpty(dataRow)) {
                 continue;
             }
 
-            Map<String, Object> item = new LinkedHashMap<>();
             String itemName = String.format("item_%03d", itemIndex);
-
             String folderPath = findTechnicalValue(headerRow, dataRow, "Mappa");
             String xml = generateXmlForRow(headerRow, dataRow, crosswalk);
 
-            item.put("itemName", itemName);
-            item.put("sourceRowNumber", rowIndex + 1);
-            item.put("folderPath", folderPath);
-            item.put("xml", xml);
+            DublinCoreItem item = new DublinCoreItem(
+                    itemName,
+                    rowIndex + 1,
+                    folderPath,
+                    xml
+            );
 
             items.add(item);
             itemIndex++;
@@ -161,7 +145,7 @@ public class DublinCoreService {
                 continue;
             }
 
-            String header = getCellValueAsString(headerCell).trim();
+            String header = excelReaderService.getCellValueAsString(headerCell).trim();
 
             if (header.isEmpty()) {
                 continue;
@@ -181,7 +165,7 @@ public class DublinCoreService {
                 continue;
             }
 
-            String value = getCellValueAsString(valueCell).trim();
+            String value = excelReaderService.getCellValueAsString(valueCell).trim();
 
             if (value.isEmpty()) {
                 continue;
@@ -221,7 +205,7 @@ public class DublinCoreService {
                 continue;
             }
 
-            String header = getCellValueAsString(headerCell).trim();
+            String header = excelReaderService.getCellValueAsString(headerCell).trim();
 
             if (!columnName.equals(header)) {
                 continue;
@@ -233,7 +217,7 @@ public class DublinCoreService {
                 return "";
             }
 
-            return normalizePath(getCellValueAsString(valueCell).trim());
+            return normalizePath(excelReaderService.getCellValueAsString(valueCell).trim());
         }
 
         return "";
@@ -255,57 +239,6 @@ public class DublinCoreService {
         }
 
         return normalized;
-    }
-
-    private List<String> readHeaderCells(Row headerRow) {
-        List<String> headers = new ArrayList<>();
-
-        short lastCellNum = headerRow.getLastCellNum();
-
-        for (int i = 0; i < lastCellNum; i++) {
-            Cell cell = headerRow.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-
-            if (cell != null && cell.getCellType() != CellType.BLANK) {
-                String value = getCellValueAsString(cell).trim();
-
-                if (!value.isEmpty()) {
-                    headers.add(value);
-                }
-            }
-        }
-
-        return headers;
-    }
-
-    private boolean isRowEmpty(Row row) {
-        if (row == null) {
-            return true;
-        }
-
-        short lastCellNum = row.getLastCellNum();
-
-        if (lastCellNum < 0) {
-            return true;
-        }
-
-        for (int i = 0; i < lastCellNum; i++) {
-            Cell cell = row.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-
-            if (cell != null && cell.getCellType() != CellType.BLANK) {
-                String value = getCellValueAsString(cell).trim();
-
-                if (!value.isEmpty()) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private String getCellValueAsString(Cell cell) {
-        DataFormatter formatter = new DataFormatter(Locale.forLanguageTag("hu"));
-        return formatter.formatCellValue(cell);
     }
 
     private String escapeXml(String value) {

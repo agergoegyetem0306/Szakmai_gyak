@@ -1,5 +1,6 @@
 package hu.demo.backend.controller;
 
+import hu.demo.backend.model.DublinCoreGenerationResult;
 import hu.demo.backend.service.DublinCoreService;
 import hu.demo.backend.service.SafZipService;
 import org.springframework.http.MediaType;
@@ -26,9 +27,9 @@ public class DublinCoreController {
     }
 
     @PostMapping(value = "/generate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, Object>> generateDublinCore(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> generateDublinCore(@RequestParam("file") MultipartFile file) {
         try {
-            Map<String, Object> result = dublinCoreService.generateDublinCoreItems(file);
+            DublinCoreGenerationResult result = dublinCoreService.generateDublinCoreItems(file);
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
