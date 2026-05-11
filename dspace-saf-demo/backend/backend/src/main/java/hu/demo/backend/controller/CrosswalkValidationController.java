@@ -1,5 +1,6 @@
 package hu.demo.backend.controller;
 
+import hu.demo.backend.service.ColumnClassificationService;
 import hu.demo.backend.service.CrosswalkService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -14,12 +15,16 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/crosswalk")
 public class CrosswalkValidationController {
-    private static final Set<String> TECHNICAL_COLUMNS = Set.of("Mappa");
 
     private final CrosswalkService crosswalkService;
+    private final ColumnClassificationService columnClassificationService;
 
-    public CrosswalkValidationController(CrosswalkService crosswalkService) {
+    public CrosswalkValidationController(
+            CrosswalkService crosswalkService,
+            ColumnClassificationService columnClassificationService
+    ) {
         this.crosswalkService = crosswalkService;
+        this.columnClassificationService = columnClassificationService;
     }
 
     @PostMapping(value = "/validate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -54,10 +59,13 @@ public class CrosswalkValidationController {
             List<String> mappedColumns = new ArrayList<>();
             List<String> unmappedColumns = new ArrayList<>();
             List<String> technicalColumns = new ArrayList<>();
+            List<String> bundleColumns = new ArrayList<>();
 
             for (String header : excelHeaders) {
-                if (TECHNICAL_COLUMNS.contains(header)) {
+                if (columnClassificationService.isTechnicalColumn(header)) {
                     technicalColumns.add(header);
+                } else if (columnClassificationService.isBundleColumn(header)) {
+                    bundleColumns.add(header);
                 } else if (crosswalk.containsKey(header)) {
                     mappedColumns.add(header);
                 } else {
@@ -71,10 +79,11 @@ public class CrosswalkValidationController {
             response.put("mappedColumns", mappedColumns);
             response.put("unmappedColumns", unmappedColumns);
             response.put("technicalColumns", technicalColumns);
+            response.put("bundleColumns", bundleColumns);
             response.put("crosswalkSize", crosswalk.size());
 
             if (unmappedColumns.isEmpty()) {
-                response.put("message", "Minden Excel oszlop szerepel a crosswalk megfeleltetésben.");
+                response.put("message", "Minden metaadat-oszlop megfeleltethető.");
             } else {
                 response.put("message", "Vannak olyan Excel oszlopok, amelyek nincsenek megfeleltetve.");
             }
