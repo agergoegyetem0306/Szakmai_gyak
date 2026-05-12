@@ -1,35 +1,41 @@
 package hu.demo.backend.service;
 
-import hu.demo.backend.model.DublinCoreGenerationResult;
-import hu.demo.backend.model.DublinCoreItem;
+import hu.demo.backend.model.SafItem;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Service
 public class SafZipService {
 
-    private final DublinCoreService dublinCoreService;
+    private final SafPackageService safPackageService;
 
-    public SafZipService(DublinCoreService dublinCoreService) {
-        this.dublinCoreService = dublinCoreService;
+    public SafZipService(SafPackageService safPackageService) {
+        this.safPackageService = safPackageService;
     }
 
     public byte[] generateSafZip(MultipartFile file) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipOutputStream zipOut = new ZipOutputStream(baos)) {
 
-            DublinCoreGenerationResult dublinCoreResult = dublinCoreService.generateDublinCoreItems(file);
+            List<SafItem> safItems = safPackageService.generateSafItems(file);
 
-            for (DublinCoreItem item : dublinCoreResult.items()) {
+            for (SafItem item : safItems) {
                 addTextFileToZip(
                         zipOut,
                         item.itemName() + "/dublin_core.xml",
-                        item.xml()
+                        item.dublinCoreXml()
+                );
+
+                addTextFileToZip(
+                        zipOut,
+                        item.itemName() + "/contents",
+                        item.contents()
                 );
             }
 
